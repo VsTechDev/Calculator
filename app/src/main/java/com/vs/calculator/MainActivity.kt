@@ -1,25 +1,35 @@
 package com.vs.calculator
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.util.DisplayMetrics
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.vs.calculator.databinding.ActivityMainBinding
 import net.objecthunter.exp4j.ExpressionBuilder
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // To fix last row of buttons
         val displayMetrics: DisplayMetrics = this.resources.displayMetrics
         val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-        eqlView.layoutParams.width = (dpWidth / 4).toInt()
-        dotView.layoutParams.width = (dpWidth / 4).toInt()
-        zeroView.layoutParams.width = (dpWidth / 2).toInt()
+        binding.eqlView.layoutParams.width = (dpWidth / 4).toInt()
+        binding.dotView.layoutParams.width = (dpWidth / 4).toInt()
+        binding.zeroView.layoutParams.width = (dpWidth / 2).toInt()
 
+        binding.answerDisplay.movementMethod = ScrollingMovementMethod()
+        binding.answerDisplay.setHorizontallyScrolling(true)
+
+        // button onclick listeners
         val btn = arrayOfNulls<Button>(10)
         for (i in 0..9) {
             val btnName = "btn$i"
@@ -28,139 +38,138 @@ class MainActivity : AppCompatActivity() {
             btn[i]!!.setOnClickListener {
                 manageText()
                 val text = try {
-                    answerDisplay.text.toString().toInt()
+                    binding.answerDisplay.text.toString().toInt()
                 } catch (e: NumberFormatException) {
 
                 }
-                answerDisplay.text = if (text == 0) {
+                binding.answerDisplay.text = if (text == 0) {
                     btn[i]!!.text
                 } else {
-                    "${answerDisplay.text}${btn[i]!!.text}"
+                    "${binding.answerDisplay.text}${btn[i]!!.text}"
                 }
             }
         }
 
-        btnAC.setOnClickListener {
-            if (answerDisplay.text.isNotEmpty()) {
-                answerDisplay.text =
-                    (answerDisplay.text.subSequence(0, answerDisplay.text.length - 1)).toString()
+        binding.btnAC.setOnClickListener {
+            if (binding.answerDisplay.text.isNotEmpty()) {
+                binding.answerDisplay.text =
+                    (binding.answerDisplay.text.subSequence(0, binding.answerDisplay.text.length - 1)).toString()
                 manageText()
             }
         }
 
-        btnAC.setOnLongClickListener {
-            answerDisplay.text = "0"
+        binding.btnAC.setOnLongClickListener {
+            binding.answerDisplay.text = "0"
             manageText()
             return@setOnLongClickListener true
         }
 
-        btnPlusMinus.setOnClickListener {
+        binding.btnPlusMinus.setOnClickListener {
             manageText()
             try {
-                answerDisplay.text = (answerDisplay.text.toString().toInt() * -1).toString()
+                binding.answerDisplay.text = (binding.answerDisplay.text.toString().toInt() * -1).toString()
             } catch (e: NumberFormatException) {
                 Toast.makeText(this, "Unable to use this here", Toast.LENGTH_SHORT).show()
             }
         }
 
-        btnDot.setOnClickListener {
+        binding.btnDot.setOnClickListener {
+            val text = binding.answerDisplay.text.split('+', '-', 'x', '÷')
 
-            val text = answerDisplay.text.split('+', '-', 'x', '÷')
-
-            answerDisplay.text = if (text[text.lastIndex].contains('.')) {
-                "${answerDisplay.text}"
+            binding.answerDisplay.text = if (text[text.lastIndex].contains('.')) {
+                "${binding.answerDisplay.text}"
             } else {
-                "${answerDisplay.text}."
+                "${binding.answerDisplay.text}."
             }
         }
 
-        btnAdd.setOnClickListener {
-            answerDisplay.text = if (
-                !answerDisplay.text.endsWith('+') &&
-                !answerDisplay.text.endsWith('-') &&
-                !answerDisplay.text.endsWith('×') &&
-                !answerDisplay.text.endsWith('÷')
+        binding.btnAdd.setOnClickListener {
+            binding.answerDisplay.text = if (
+                !binding.answerDisplay.text.endsWith('+') &&
+                !binding.answerDisplay.text.endsWith('-') &&
+                !binding.answerDisplay.text.endsWith('×') &&
+                !binding.answerDisplay.text.endsWith('÷')
             ) {
-                "${answerDisplay.text}${btnAdd.text}"
+                "${binding.answerDisplay.text}${binding.btnAdd.text}"
             } else {
                 "${
-                    answerDisplay.text.subSequence(
+                    binding.answerDisplay.text.subSequence(
                         0,
-                        answerDisplay.text.length - 1
+                        binding.answerDisplay.text.length - 1
                     )
-                }${btnAdd.text}"
+                }${binding.btnAdd.text}"
             }
         }
 
-        btnSub.setOnClickListener {
-            answerDisplay.text = if (
-                !answerDisplay.text.endsWith('+') &&
-                !answerDisplay.text.endsWith('-') &&
-                !answerDisplay.text.endsWith('×') &&
-                !answerDisplay.text.endsWith('÷')
+        binding.btnSub.setOnClickListener {
+            binding.answerDisplay.text = if (
+                !binding.answerDisplay.text.endsWith('+') &&
+                !binding.answerDisplay.text.endsWith('-') &&
+                !binding.answerDisplay.text.endsWith('×') &&
+                !binding.answerDisplay.text.endsWith('÷')
             ) {
-                "${answerDisplay.text}${btnSub.text}"
+                "${binding.answerDisplay.text}${binding.btnSub.text}"
             } else {
                 "${
-                    answerDisplay.text.subSequence(
+                    binding.answerDisplay.text.subSequence(
                         0,
-                        answerDisplay.text.length - 1
+                        binding.answerDisplay.text.length - 1
                     )
-                }${btnSub.text}"
+                }${binding.btnSub.text}"
             }
         }
 
-        btnMul.setOnClickListener {
-            answerDisplay.text = if (
-                !answerDisplay.text.endsWith('+') &&
-                !answerDisplay.text.endsWith('-') &&
-                !answerDisplay.text.endsWith('×') &&
-                !answerDisplay.text.endsWith('÷')
+        binding.btnMul.setOnClickListener {
+            binding.answerDisplay.text = if (
+                !binding.answerDisplay.text.endsWith('+') &&
+                !binding.answerDisplay.text.endsWith('-') &&
+                !binding.answerDisplay.text.endsWith('×') &&
+                !binding.answerDisplay.text.endsWith('÷')
             ) {
-                "${answerDisplay.text}${btnMul.text}"
+                "${binding.answerDisplay.text}${binding.btnMul.text}"
             } else {
                 "${
-                    answerDisplay.text.subSequence(
+                    binding.answerDisplay.text.subSequence(
                         0,
-                        answerDisplay.text.length - 1
+                        binding.answerDisplay.text.length - 1
                     )
-                }${btnMul.text}"
+                }${binding.btnMul.text}"
             }
         }
 
-        btnDiv.setOnClickListener {
-            answerDisplay.text = if (
-                !answerDisplay.text.endsWith('+') &&
-                !answerDisplay.text.endsWith('-') &&
-                !answerDisplay.text.endsWith('×') &&
-                !answerDisplay.text.endsWith('÷')
+        binding.btnDiv.setOnClickListener {
+            binding.answerDisplay.text = if (
+                !binding.answerDisplay.text.endsWith('+') &&
+                !binding.answerDisplay.text.endsWith('-') &&
+                !binding.answerDisplay.text.endsWith('×') &&
+                !binding.answerDisplay.text.endsWith('÷')
             ) {
-                "${answerDisplay.text}${btnDiv.text}"
+                "${binding.answerDisplay.text}${binding.btnDiv.text}"
             } else {
-                "${answerDisplay.text.subSequence(0, answerDisplay.text.length - 1)}${btnDiv.text}"
+                "${binding.answerDisplay.text.subSequence(0, binding.answerDisplay.text.length - 1)}${binding.btnDiv.text}"
             }
         }
 
-        btnPer.setOnClickListener {
-            answerDisplay.text = if (
-                !answerDisplay.text.endsWith('+') &&
-                !answerDisplay.text.endsWith('-') &&
-                !answerDisplay.text.endsWith('×') &&
-                !answerDisplay.text.endsWith('÷')
+        binding.btnPer.setOnClickListener {
+            binding.answerDisplay.text = if (
+                !binding.answerDisplay.text.endsWith('+') &&
+                !binding.answerDisplay.text.endsWith('-') &&
+                !binding.answerDisplay.text.endsWith('×') &&
+                !binding.answerDisplay.text.endsWith('÷')
             ) {
-                "${answerDisplay.text}${btnPer.text}"
+                "${binding.answerDisplay.text}${binding.btnPer.text}"
             } else {
                 "${
-                    answerDisplay.text.subSequence(
+                    binding.answerDisplay.text.subSequence(
                         0,
-                        answerDisplay.text.length - 1
+                        binding.answerDisplay.text.length - 1
                     )
-                }${btnPer.text}"
+                }${binding.btnPer.text}"
             }
         }
 
-        btnEql.setOnClickListener {
-            var text = answerDisplay.text.toString()
+        binding.btnEql.setOnClickListener {
+            var text = binding.answerDisplay.text.toString()
             text = text.replace('×', '*')
             text = text.replace('÷', '/')
             text = text.replace("%", "/100")
@@ -170,30 +179,27 @@ class MainActivity : AppCompatActivity() {
                 val result = expression.evaluate()
                 val longResult = result.toLong()
                 if (result == longResult.toDouble()) {
-                    answerDisplay.text = longResult.toString()
+                    binding.answerDisplay.text = longResult.toString()
                 } else {
-                    answerDisplay.text = result.toString()
+                    binding.answerDisplay.text = result.toString()
                 }
             } catch (e: IllegalArgumentException) {
-                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
             }
         }
-
     }
 
     private fun manageText() {
         when {
-            answerDisplay.text.length >= 16 -> {
-                answerDisplay.textSize = 20f
+            binding.answerDisplay.text.length >= 10 -> {
+                binding.answerDisplay.textSize = 30f
             }
-            answerDisplay.text.length >= 10 -> {
-                answerDisplay.textSize = 30f
-            }
-            answerDisplay.text.length >= 6 -> {
-                answerDisplay.textSize = 50f
+            binding.answerDisplay.text.length >= 6 -> {
+                binding.answerDisplay.textSize = 50f
             }
             else -> {
-                answerDisplay.textSize = 80f
+                binding.answerDisplay.textSize = 80f
             }
         }
     }
