@@ -383,12 +383,12 @@
             android:id="@+id/zeroView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
+            android:layout_weight=".25"
             android:padding="10dp">
 
             <Button
                 android:id="@+id/btn0"
-                android:layout_width="match_parent"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/black_gray_round"
@@ -414,6 +414,25 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/black_gray_round"
                 android:text="@string/dot"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/backView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/black_gray_round"
+                android:text="⌫"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 

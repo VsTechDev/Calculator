@@ -2,7 +2,6 @@ package com.vs.calculator
 
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.DisplayMetrics
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,13 +17,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        // To fix last row of buttons
-        val displayMetrics: DisplayMetrics = this.resources.displayMetrics
-        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-        binding.eqlView.layoutParams.width = (dpWidth / 4).toInt()
-        binding.dotView.layoutParams.width = (dpWidth / 4).toInt()
-        binding.zeroView.layoutParams.width = (dpWidth / 2).toInt()
 
         binding.answerDisplay.movementMethod = ScrollingMovementMethod()
         binding.answerDisplay.setHorizontallyScrolling(true)
@@ -51,25 +43,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnAC.setOnClickListener {
-            if (binding.answerDisplay.text.isNotEmpty()) {
-                binding.answerDisplay.text =
-                    (binding.answerDisplay.text.subSequence(0, binding.answerDisplay.text.length - 1)).toString()
-                manageText()
-            }
-        }
-
-        binding.btnAC.setOnLongClickListener {
             binding.answerDisplay.text = "0"
             manageText()
-            return@setOnLongClickListener true
         }
 
         binding.btnPlusMinus.setOnClickListener {
             manageText()
             try {
-                binding.answerDisplay.text = (binding.answerDisplay.text.toString().toInt() * -1).toString()
+                binding.answerDisplay.text =
+                    (binding.answerDisplay.text.toString().toInt() * -1).toString()
             } catch (e: NumberFormatException) {
                 Toast.makeText(this, "Unable to use this here", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.btnBack.setOnClickListener {
+            if (binding.answerDisplay.text.isNotEmpty()) {
+                binding.answerDisplay.text =
+                    (binding.answerDisplay.text.subSequence(
+                        0,
+                        binding.answerDisplay.text.length - 1
+                    )).toString()
+                manageText()
             }
         }
 
@@ -146,7 +141,12 @@ class MainActivity : AppCompatActivity() {
             ) {
                 "${binding.answerDisplay.text}${binding.btnDiv.text}"
             } else {
-                "${binding.answerDisplay.text.subSequence(0, binding.answerDisplay.text.length - 1)}${binding.btnDiv.text}"
+                "${
+                    binding.answerDisplay.text.subSequence(
+                        0,
+                        binding.answerDisplay.text.length - 1
+                    )
+                }${binding.btnDiv.text}"
             }
         }
 
@@ -173,20 +173,20 @@ class MainActivity : AppCompatActivity() {
             text = text.replace('×', '*')
             text = text.replace('÷', '/')
             text = text.replace("%", "/100")
-            val expression = ExpressionBuilder(text).build()
 
             try {
+                val expression = ExpressionBuilder(text).build()
                 val result = expression.evaluate()
-                val longResult = result.toLong()
-                if (result == longResult.toDouble()) {
-                    binding.answerDisplay.text = longResult.toString()
+                if (result.toString().split(".")[1].length > 5){
+                    binding.answerDisplay.text = String.format("%.5f", result)
                 } else {
                     binding.answerDisplay.text = result.toString()
                 }
-            } catch (e: IllegalArgumentException) {
+            } catch (e: Exception) {
                 Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
             }
+            manageText()
         }
     }
 
