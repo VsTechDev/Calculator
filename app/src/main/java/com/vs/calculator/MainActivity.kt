@@ -177,10 +177,16 @@ class MainActivity : AppCompatActivity() {
             try {
                 val expression = ExpressionBuilder(text).build()
                 val result = expression.evaluate()
-                if (result.toString().split(".")[1].length > 5){
-                    binding.answerDisplay.text = String.format("%.5f", result)
-                } else {
-                    binding.answerDisplay.text = result.toString()
+                when {
+                    result.toString().split(".")[1].toInt() == 0 -> {
+                        binding.answerDisplay.text = result.toString().split(".")[0]
+                    }
+                    result.toString().split(".")[1].length > 5 -> {
+                        binding.answerDisplay.text = String.format("%.5f", result)
+                    }
+                    else -> {
+                        binding.answerDisplay.text = result.toString()
+                    }
                 }
             } catch (e: Exception) {
                 Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show()

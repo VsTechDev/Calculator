@@ -19,4 +19,5 @@
     <string name="plus">+</string>
     <string name="dot">.</string>
     <string name="eql">=</string>
+    <string name="back">⌫</string>
 </resources>

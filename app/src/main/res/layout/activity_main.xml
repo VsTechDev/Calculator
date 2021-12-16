@@ -432,7 +432,7 @@
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/black_gray_round"
-                android:text="⌫"
+                android:text="@string/back"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
 
